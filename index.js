@@ -2,10 +2,13 @@ require("dotenv").config();
 const querystring = require("node:querystring");
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 const port = 8888;
+const client_port = 5173;
 
+const frontend_uri = process.env.FRONTEND_URI;
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI;
@@ -28,6 +31,13 @@ const generateRandomString = (length) => {
   }
   return text;
 };
+
+app.use(
+  cors({
+    origin: frontend_uri,
+    optionsSuccessStatus: 200,
+  })
+);
 
 //--------------------------------
 // TODO Routes && Methods
@@ -78,33 +88,16 @@ app.get("/callback", (req, res) => {
   })
     .then((response) => {
       if (response.status === 200) {
-        // const { access_token, token_type } = response.data;
+        const { access_token, refresh_token } = response.data;
 
-        // axios
-        //   .get("https://api.spotify.com/v1/me", {
-        //     headers: {
-        //       Authorization: `${token_type} ${access_token}`,
-        //     },
-        //   })
-        //   .then((response) => {
-        //     res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-        //   })
-        //   .catch((error) => res.send(error));
+        const queryParams = querystring.stringify({
+          access_token,
+          refresh_token,
+        });
 
-        const { refresh_token } = response.data;
-
-        axios
-          .get(
-            `http://localhost:8888/refresh_token?refresh_token=${refresh_token}`
-          )
-          .then((response) => {
-            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-          })
-          .catch((error) => {
-            res.send(error);
-          });
+        res.redirect(`${frontend_uri}/?${queryParams}`);
       } else {
-        res.send(response);
+        res.redirect(`/?${querystring.stringify({ error: "invalid_token" })}`);
       }
     })
     .catch((error) => res.send(error));
