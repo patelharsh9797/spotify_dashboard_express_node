@@ -2,7 +2,6 @@ require("dotenv").config();
 const querystring = require("node:querystring");
 const express = require("express");
 const axios = require("axios");
-const cors = require("cors");
 
 const app = express();
 const port = 8888;
@@ -32,12 +31,6 @@ const generateRandomString = (length) => {
   return text;
 };
 
-app.use(
-  cors({
-    origin: frontend_uri,
-    optionsSuccessStatus: 200,
-  })
-);
 
 //--------------------------------
 // TODO Routes && Methods
@@ -50,6 +43,7 @@ app.get("/", (req, res) => {
 
   res.json(data);
 });
+
 
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
