@@ -1,10 +1,15 @@
-import {useEffect, useState} from "react";
-import {accessToken, logout, getCurrentUserProfile} from "./spotify";
-import {catchErrors} from "./utils";
-import {BrowserRouter as Router, Route, Routes,useLocation} from 'react-router-dom'
-import styled from 'styled-components'
-import {GlobalStyle} from "./styles";
-
+import { useEffect, useState } from "react";
+import { accessToken, logout, getCurrentUserProfile } from "./spotify";
+import { catchErrors } from "./utils";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
+import styled from "styled-components";
+import { GlobalStyle } from "./styles";
+import { Login } from "./pages";
 
 const StyledLoginButton = styled.a`
   background-color: var(--green);
@@ -13,74 +18,75 @@ const StyledLoginButton = styled.a`
   margin: 20px;
   border-radius: 30px;
   display: inline-block;
-`
-
+`;
 
 function ScrollToTop() {
-   const {pathname} = useLocation()
+  const { pathname } = useLocation();
 
-    useEffect(()=>{
-        window.scrollTo(0,0)
-    },[pathname])
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-    return null
+  return null;
 }
 
 function App() {
+  const [token, setToken] = useState(null);
+  const [profile, setProfile] = useState(null);
 
-    const [token, setToken] = useState(null);
-    const [profile, setProfile] = useState(null);
+  useEffect(() => {
+    setToken(accessToken);
 
-    useEffect(() => {
-        setToken(accessToken);
+    const fetchProfile = async () => {
+      const { data } = await getCurrentUserProfile();
+      setProfile(data);
+    };
 
-        const fetchProfile = async () => {
-            const {data} = await getCurrentUserProfile();
-            setProfile(data);
-        };
+    catchErrors(fetchProfile());
+  }, []);
 
-        catchErrors(fetchProfile());
+  return (
+    <>
+      <div className="app">
+        <GlobalStyle />
+        {!token ? (
+          <Login />
+        ) : (
+          <Router>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/top-artists" element={"Top artists"} />
+              <Route path="/top-tracks" element={"Top tracks"} />
+              <Route path="/playlists" element={"Playlist"} />
+              <Route path="/playlists/:id" element={"Playlist by ID"} />
+              <Route
+                path="/"
+                element={
+                  <>
+                    <h3>Logged In Successfully</h3>
+                    <button onClick={logout}>Log out</button>
+                    {profile && (
+                      <>
+                        <h1>{profile.display_name}</h1>
+                        <h2>{profile.followers.total}</h2>
 
-    }, []);
-
-    return (
-        <>
-
-            <div className="app">
-                <GlobalStyle />
-                {!token ? (
-
-                    <StyledLoginButton href="http://localhost:8888/login">Login To Spotify</StyledLoginButton>
-                ) : (
-
-                    <Router>
-                        <ScrollToTop/>
-                        <Routes>
-                            <Route path="/top-artists" element={"Top artists"}/>
-                            <Route path="/top-tracks" element={"Top tracks"}/>
-                            <Route path="/playlists" element={"Playlist"}/>
-                            <Route path="/playlists/:id" element={"Playlist by ID"}/>
-                            <Route path="/" element={<><h3>Logged In Successfully</h3>
-                                <button onClick={logout}>Log out</button>
-
-                                {profile && (
-                                    <>
-                                        <h1>{profile.display_name}</h1>
-                                        <h2>{profile.followers.total}</h2>
-
-                                        {profile.images.length && profile.images[1].url && (
-                                            <img src={profile.images[1].url} alt="profile picture"/>
-                                        )}
-                                    </>
-                                )}
-                            </>}/>
-                        </Routes>
-                    </Router>
-
-                )}
-            </div>
-        </>
-    );
+                        {profile.images.length && profile.images[1].url && (
+                          <img
+                            src={profile.images[1].url}
+                            alt="profile picture"
+                          />
+                        )}
+                      </>
+                    )}
+                  </>
+                }
+              />
+            </Routes>
+          </Router>
+        )}
+      </div>
+    </>
+  );
 }
 
 export default App;
