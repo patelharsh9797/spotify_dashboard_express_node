@@ -31,7 +31,6 @@ const generateRandomString = (length) => {
   return text;
 };
 
-
 //--------------------------------
 // TODO Routes && Methods
 //--------------------------------
@@ -44,12 +43,13 @@ app.get("/", (req, res) => {
   res.json(data);
 });
 
-
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  const scope = "user-read-private user-read-email";
+  const scope = ["user-read-private", "user-read-email", "user-top-read"].join(
+    " ",
+  );
 
   const queryParams = querystring.stringify({
     response_type: "code",
@@ -76,7 +76,7 @@ app.get("/callback", (req, res) => {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${new Buffer.from(
-        `${client_id}:${client_secret}`
+        `${client_id}:${client_secret}`,
       ).toString("base64")}`,
     },
   })
@@ -111,7 +111,7 @@ app.get("/refresh_token", (req, res) => {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${new Buffer.from(
-        `${client_id}:${client_secret}`
+        `${client_id}:${client_secret}`,
       ).toString("base64")}`,
     },
   })
