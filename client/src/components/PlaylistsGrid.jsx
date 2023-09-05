@@ -3,7 +3,6 @@ import { StyledGrid } from "../styles";
 
 const PlaylistsGrid = ({ playlists }) => (
   <>
-    {console.log(playlists[1])}
     {playlists && playlists.length ? (
       <StyledGrid>
         {playlists.map((playlist, i) => (

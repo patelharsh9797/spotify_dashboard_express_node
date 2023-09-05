@@ -3,7 +3,6 @@ import { StyledTrackList } from "../styles";
 
 const TrackList = ({ tracks }) => (
   <>
-    {console.log(tracks[0])}
     {tracks && tracks.length ? (
       <StyledTrackList>
         {tracks.map((track, i) => (
