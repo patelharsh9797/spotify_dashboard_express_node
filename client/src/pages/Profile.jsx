@@ -25,6 +25,8 @@ const Profile = () => {
       const { data: userProfile } = await getCurrentUserProfile();
       setProfile(userProfile);
 
+      document.title = userProfile.display_name;
+
       const { data: userPlaylists } = await getCurrentUserPlaylists();
       setPlaylists(userPlaylists);
 
