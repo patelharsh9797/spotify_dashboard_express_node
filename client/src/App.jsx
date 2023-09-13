@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { accessToken, logout, getCurrentUserProfile } from "./spotify";
-import { catchErrors } from "./utils";
+import { accessToken, logout } from "./spotify";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,7 +8,14 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import { GlobalStyle } from "./styles";
-import { Login, Profile, Playlists, Playlist } from "./pages";
+import {
+  Login,
+  Profile,
+  Playlists,
+  Playlist,
+  TopArtists,
+  TopTracks,
+} from "./pages";
 
 const StyledLogoutButton = styled.button`
   position: absolute;
@@ -56,8 +62,8 @@ function App() {
             <Router>
               <ScrollToTop />
               <Routes>
-                <Route path="/top-artists" element={"Top artists"} />
-                <Route path="/top-tracks" element={"Top tracks"} />
+                <Route path="/top-artists" element={<TopArtists />} />
+                <Route path="/top-tracks" element={<TopTracks />} />
                 <Route path="/playlists" element={<Playlists />} />
                 <Route path="/playlists/:id" element={<Playlist />} />
                 <Route path="/" element={<Profile />} />

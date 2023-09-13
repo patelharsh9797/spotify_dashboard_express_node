@@ -12,6 +12,7 @@ import {
   ArtistsGrid,
   TrackList,
   PlaylistsGrid,
+  Loader,
 } from "../components";
 
 const Profile = () => {
@@ -72,7 +73,7 @@ const Profile = () => {
             </div>
           </StyledHeader>
 
-          {topArtists && topTracks && playlists && (
+          {topArtists && topTracks && playlists ? (
             <main>
               {topArtists.items.length > 0 && (
                 <SectionWrapper
@@ -98,6 +99,8 @@ const Profile = () => {
                 </SectionWrapper>
               )}
             </main>
+          ) : (
+            <Loader />
           )}
         </>
       )}
